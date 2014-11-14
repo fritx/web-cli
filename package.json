@@ -1,0 +1,12 @@
+{
+  "name": "web-cli",
+  "version": "0.0.1",
+  "description": "Master your Command Line on your web",
+  "repository": "git@github.com:fritx/web-cli.git",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.10.2",
+    "lodash": "^2.4.1",
+    "socket.io": "^1.2.0"
+  }
+}

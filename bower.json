@@ -1,0 +1,7 @@
+{
+  "name": "web-cli",
+  "dependencies": {
+    "jquery": "~2.1.1",
+    "socket.io-client": "~1.2.0"
+  }
+}
