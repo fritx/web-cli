@@ -8,24 +8,37 @@
   var $dir = $('input.dir-input')
   var $run = $('button.run-btn')
 
-  socket.on('respond', respond)
-  socket.on('dir', function(dir){
-    $dir.val(dir)
-  })
-
-  // ctrl+enter
-  $form.on('submit', function(event){
-    event.preventDefault()
-    submit()
-  })
-  $cmd.on('keydown', function(event){
-    if (event.ctrlKey && event.keyCode === 13) {
-      submit()
+  // auth
+  socket.on('auth', function(result){
+    if (result.ok) {
+      setup(result)
+    } else {
+      alert(result.msg)
+      setTimeout(login, 15000) // 15s
     }
   })
-  $dir.on('change', function(){
-    socket.emit('dir', $dir.val())
-  })
+  login()
+
+
+  function setup(result){
+    socket.on('respond', respond)
+
+    // ctrl+enter
+    $form.on('submit', function(event){
+      event.preventDefault()
+      submit()
+    })
+    $cmd.on('keydown', function(event){
+      if (event.ctrlKey && event.keyCode === 13) {
+        submit()
+      }
+    })
+
+    $dir.val(result.dir)
+    $dir.on('change', function(){
+      socket.emit('dir', $dir.val())
+    })
+  }
 
   function respond(result){
     if (result.err) {}
@@ -51,6 +64,13 @@
     var cmd = $cmd.val().replace(/\n+/g, '\n')
       .replace(/\n$/, '')
     socket.emit('run', cmd)
+  }
+
+  function login(){
+    socket.emit('login', {
+      username: prompt('Username'),
+      password: prompt('Password')
+    })
   }
 
 })();

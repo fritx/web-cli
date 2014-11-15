@@ -44,20 +44,45 @@ function initSocketIO(){
   io = socket_io(server)
   io.on('connection', function(socket){
     socket.data = {
+      user: null,
+      auth: false,
       dir: config.dir
     }
 
     socket.on('dir', function(dir){
+      if (!socket.data.auth) return
       socket.data.dir = dir
     })
 
-    socket.on('run', function(input){
-      runCommand(input, socket)
+    socket.on('run', function(cmd){
+      if (!socket.data.auth) return
+      runCommand(cmd, socket)
     })
 
-    socket.emit('dir', socket.data.dir)
+    socket.on('login', function(user){
+      if (checkAuth(user)) {
+        socket.data.user = user.username
+        socket.data.auth = true
+        socket.emit('auth', {
+          ok: true,
+          dir: socket.data.dir
+        })
+      } else {
+        socket.emit('auth', {
+          ok: false,
+          msg: 'Auth failed'
+        })
+      }
+    })
   })
   console.log('socket.io binded')
+}
+
+function checkAuth(user){
+  return _.some(config.users, function(u){
+    return u.username === user.username &&
+      u.password === user.password
+  })
 }
 
 function runCommand(cmd, socket){
