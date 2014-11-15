@@ -51,7 +51,11 @@ function initSocketIO(){
 
     socket.on('dir', function(dir){
       if (!socket.data.auth) return
-      socket.data.dir = dir
+      var _dir = path.resolve(dir)
+      socket.data.dir = _dir
+      if (_dir !== dir) {
+        socket.emit('dir', _dir)
+      }
     })
 
     socket.on('run', function(cmd){

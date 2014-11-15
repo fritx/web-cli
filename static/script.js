@@ -22,6 +22,9 @@
 
   function setup(result){
     socket.on('respond', respond)
+    socket.on('dir', function(dir){
+      $dir.val(dir)
+    })
 
     // ctrl+enter
     $form.on('submit', function(event){
