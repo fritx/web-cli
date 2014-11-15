@@ -8,6 +8,8 @@ var _ = require('lodash')
 var config = require('./config')
 var server, io
 
+//process.title = 'Web CLI'
+
 app.use('/', express.static(
   path.resolve(__dirname, 'static')
 ))
@@ -68,6 +70,7 @@ function runCommand(cmd, socket){
     child_process.exec(seg, opt, function(err, stdout, stderr){
       var result = {
         err: !!err,
+        seg: seg,
         cwd: opt.cwd,
         stdout: stdout,
         stderr: stderr

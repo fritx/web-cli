@@ -42,7 +42,7 @@
 
     var dateStr = new Date().toLocaleString()
     $('<pre>').addClass('log-info')
-        .text(dateStr + ' - ' + result.cwd)
+        .text(dateStr + '\n' + result.cwd + ' > ' + result.seg)
         .appendTo($log)
     $log.scrollTop($log.prop('scrollHeight'))
   }
