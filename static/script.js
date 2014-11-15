@@ -14,10 +14,10 @@
       setup(result)
     } else {
       alert(result.msg)
-      setTimeout(login, 15000) // 15s
+      setTimeout(login, 5000) // 5s
     }
   })
-  login()
+  socket.on('login', login)
 
 
   function setup(result){

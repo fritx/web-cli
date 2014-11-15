@@ -5,6 +5,7 @@ var users = [
     password: 'fork_me'
   }
 ]
+// no login if `users` === null
 
 var _private = {
   users: users

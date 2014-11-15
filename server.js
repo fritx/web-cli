@@ -4,6 +4,7 @@ var app = express()
 var socket_io = require('socket.io')
 var child_process = require('child_process')
 var _ = require('lodash')
+var fs = require('fs')
 
 var config = require('./config')
 var server, io
@@ -52,7 +53,11 @@ function initSocketIO(){
     socket.on('dir', function(dir){
       if (!socket.data.auth) return
       var _dir = path.resolve(dir)
-      socket.data.dir = _dir
+      if (fs.existsSync(_dir)) {
+        socket.data.dir = _dir
+      } else {
+        _dir = socket.data.dir // roll back
+      }
       if (_dir !== dir) {
         socket.emit('dir', _dir)
       }
@@ -63,21 +68,30 @@ function initSocketIO(){
       runCommand(cmd, socket)
     })
 
-    socket.on('login', function(user){
-      if (checkAuth(user)) {
-        socket.data.user = user.username
-        socket.data.auth = true
-        socket.emit('auth', {
-          ok: true,
-          dir: socket.data.dir
-        })
-      } else {
-        socket.emit('auth', {
-          ok: false,
-          msg: 'Auth failed'
-        })
-      }
-    })
+    if (config.users) {
+      socket.on('login', function(user){
+        if (checkAuth(user)) {
+          socket.data.user = user.username
+          socket.data.auth = true
+          socket.emit('auth', {
+            ok: true,
+            dir: socket.data.dir
+          })
+        } else {
+          socket.emit('auth', {
+            ok: false,
+            msg: 'Auth failed'
+          })
+        }
+      })
+      socket.emit('login')
+    } else {
+      socket.data.auth = true
+      socket.emit('auth', {
+        ok: true,
+        dir: socket.data.dir
+      })
+    }
   })
   console.log('socket.io binded')
 }
